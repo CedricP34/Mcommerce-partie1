@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -28,7 +29,6 @@ public class ProductController {
     @Autowired
     private ProductDao productDao;
 
-
     //Récupérer la liste des produits
 
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
@@ -48,7 +48,6 @@ public class ProductController {
         return produitsFiltres;
     }
 
-
     //Récupérer un produit par son Id
     @ApiOperation(value = "Récupère un produit grâce à son ID à condition que celui-ci soit en stock!")
     @GetMapping(value = "/Produits/{id}")
@@ -62,13 +61,12 @@ public class ProductController {
         return produit;
     }
 
-
-
-
     //ajouter un produit
     @PostMapping(value = "/Produits")
 
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
+    	
+    	if((product.getPrix()-product.getPrixAchat())<=0) throw new ProduitGratuitException("Le produit est vendu a prix coutant ou à perte");
 
         Product productAdded =  productDao.save(product);
 
@@ -95,7 +93,6 @@ public class ProductController {
 
         productDao.save(product);
     }
-
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
