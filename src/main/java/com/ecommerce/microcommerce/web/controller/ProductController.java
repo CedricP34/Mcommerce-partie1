@@ -66,7 +66,7 @@ public class ProductController {
 
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
     	
-    	if((product.getPrix()-product.getPrixAchat())<=0) throw new ProduitGratuitException("Le produit est vendu a prix coutant ou à perte");
+    	if(product.getPrix()==0) throw new ProduitGratuitException("Votre produit est gratuit");
 
         Product productAdded =  productDao.save(product);
 
